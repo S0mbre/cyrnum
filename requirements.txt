@@ -3,4 +3,5 @@ dash-core-components>=1.15.0
 dash-bootstrap-components>=0.11.3
 dash-html-components>=1.1.2
 gunicorn==20.0.4
+whitenoise==5.2.0
 Pillow>=8.0.1
