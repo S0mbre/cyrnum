@@ -14,7 +14,7 @@ DEBUG = False
 
 #========================== LAYOUTS =========================#
 
-headerimg = html.Div(html.Img(id='img_header', src='static/titlecn.png'), 
+headerimg = html.Div(html.Img(id='img_header', src='/static/titlecn.png'), 
                     style={'text-align': 'center', 'margin': '2%', 'white-space': 'nowrap'})
 
 input_number_form = dbc.FormGroup(
@@ -145,5 +145,5 @@ def register__update_pic(number, bgcolor, fgcolor, fontsize, options, old_number
 #-----------------------------------------------------------------------------------#
 
 if __name__ == '__main__':
-    # app.run_server(host='localhost', debug=DEBUG)
-    app.run_server(debug=DEBUG)
+    app.run_server(host='localhost', debug=DEBUG)
+    # app.run_server(debug=DEBUG)
