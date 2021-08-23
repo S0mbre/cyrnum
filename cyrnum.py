@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # https://en.wikipedia.org/wiki/Cyrillic_numerals
-from PIL import Image, ImageDraw, ImageFont, ImageChops, ImageOps
-import math
+from PIL import Image, ImageDraw, ImageFont, ImageChops, ImageOps, ImageColor
+import math, textwrap
 from random import randint
 
 DIGITS = {1: '\u0430', 2: '\u0432', 3: '\u0433', 4: '\u0434', 5: '\u0435', 6: '\u0455', 7: '\u0437', 8: '\u0438', 9: '\u045f', 10: '\u0456',
@@ -11,24 +11,51 @@ DIGITS = {1: '\u0430', 2: '\u0432', 3: '\u0433', 4: '\u0434', 5: '\u0435', 6: '\
 THOUSAND = '\uf030'
 MAXNUMBER = 9999999999
 FONTFILE = 'EvangelieTT.ttf'
+DEFFONT = 'verdana.ttf'
 
 class Cyrnum:
 
-    def __init__(self, fontsize=256, bgcolor='white', color='black', xinterval=4, 
-                 koloda_simple=False, leodr_simple=False, titlo=True):
-        self.bgcolor = bgcolor
-        self.color = color
+    def __init__(self, fontsize=256, bgcolor='white', color='black', transparent=False, xinterval=4, 
+                 koloda_simple=False, leodr_simple=False, titlo=True, 
+                 draw_exceptions=False, exceptions_fontsize=18):
+        self.bgcolor = ImageColor.getrgb(bgcolor)
+        self.color = ImageColor.getrgb(color)
+        if transparent:
+            self.bgcolor = (self.bgcolor[0], self.bgcolor[1], self.bgcolor[2], 0)
+            self.color = (self.color[0], self.color[1], self.color[2], 255)
+        self.transparent = transparent
         self.fontsize = fontsize
         self.xinterval = xinterval
         self.koloda_simple = koloda_simple
         self.leodr_simple = leodr_simple
         self.titlo = titlo
+        self.draw_exceptions = draw_exceptions
+        self.exceptions_fontsize = exceptions_fontsize
+
+    def _draw_exception(self, message, bgcolor=None, color=None):
+        lines = textwrap.wrap(message, width=40)
+        font = ImageFont.truetype(DEFFONT, self.exceptions_fontsize, encoding='unic')
+        sizes = [font.getsize(line) for line in lines]
+        maxw = max(sizes, key=lambda s: s[0])[0]
+        maxh = max(sizes, key=lambda s: s[1])[1]
+        margin = 10
+        w = maxw + margin * 2
+        h = len(lines) * (maxh + 2) + margin * 2 - 2
+        img = Image.new('RGBA' if self.transparent else 'RGB', (w, h), bgcolor or self.bgcolor)
+        draw = ImageDraw.Draw(img)
+        y = margin
+        color = color or self.color
+        for line, sz in zip(lines, sizes):
+            draw.text(((w - sz[0]) / 2, y), line, font=font, fill=color)
+            y += sz[1] + 2
+        return img
         
     def _autocrop(self, img, bgcolor=None, onbox=None):
-        if img.mode != 'RGB':
-            img = img.convert('RGB')
+        mode_ = 'RGBA' if self.transparent else 'RGB'
+        if img.mode != mode_:
+            img = img.convert(mode_)
         bgcolor = bgcolor or self.bgcolor
-        bg = Image.new('RGB', img.size, bgcolor)
+        bg = Image.new(mode_, img.size, bgcolor)
         diff = ImageChops.difference(img, bg)
         bbox = diff.getbbox()
         if bbox:
@@ -43,7 +70,7 @@ class Cyrnum:
         max_height = max(heights)
         total_height = max_height + margins_tb*2
 
-        new_im = Image.new('RGB', (total_width, total_height), self.bgcolor)
+        new_im = Image.new('RGBA' if self.transparent else 'RGB', (total_width, total_height), self.bgcolor)
 
         x_offset = margins_rl
         
@@ -56,11 +83,11 @@ class Cyrnum:
 
     def _draw_txt_rot(self, img, x, y, txt, angle=0):
         font = ImageFont.truetype(FONTFILE, math.ceil(self.fontsize * 0.3), encoding='unic')
-        imcomma = Image.new('L', (500, 500))
+        imcomma = Image.new('RGBA', (500, 500), self.bgcolor) if self.transparent else Image.new('L', (500, 500))
         draw = ImageDraw.Draw(imcomma)
-        draw.text((0, 0), txt, fill=255, font=font)
+        draw.text((0, 0), txt, fill=self.color if self.transparent else 255, font=font)
         imcomma1 = imcomma.rotate(360 - angle, expand=True)
-        imcomma2 = ImageOps.colorize(imcomma1, self.bgcolor, self.color)
+        imcomma2 = imcomma1 if self.transparent else ImageOps.colorize(imcomma1, self.bgcolor, self.color)
         imcomma3 = self._autocrop(imcomma2)
         img.paste(imcomma3, (x - round(imcomma3.size[0]/2), y - round(imcomma3.size[1]/2)))
 
@@ -68,11 +95,11 @@ class Cyrnum:
         dig_txt = DIGITS[dig]
         
         if exp > 9:
-            raise Exception('Невозможно записать число с порядком более 9!')
+            raise Exception('Невозможно записать число с порядком более 9! ')
         
         font = ImageFont.truetype(FONTFILE, self.fontsize, encoding='unic')
         imgsize = font.getsize(' \u0192 ')
-        img = Image.new('RGB', tuple(math.ceil(x * 3) for x in imgsize), self.bgcolor)
+        img = Image.new('RGBA' if self.transparent else 'RGB', tuple(math.ceil(x * 3) for x in imgsize), self.bgcolor)
         draw = ImageDraw.Draw(img)
         point = (math.floor(imgsize[0] / 1.2), 0)
         
@@ -232,7 +259,7 @@ class Cyrnum:
         if len(s) > 1:
             tens = int(s[0])
             if tens:
-                ten = (tens == 10)
+                ten = (tens == 1)
                 images.append((tens, self._draw_digit(tens * 10 if exp < 3 else tens, exp + 1, **kwargs)))
             s = s[1:]
         ones = int(s[0])
@@ -255,12 +282,19 @@ class Cyrnum:
         return l
 
     def draw(self, number):
-        if number < 1 or MAXNUMBER > MAXNUMBER:
-            raise Exception('Число должно быть от 1 до 9 999 999 999!')
-        chunks = self._parse_number(number)
-        l = len(chunks)
-        images = [self._draw_999(num, (l - 1 - i) * 3) for i, num in enumerate(chunks)]
-        combimg = self._combine_images(images, self.fontsize//5, self.fontsize//(3 if self.titlo else 5))
+        try:
+            if number < 1 or number > MAXNUMBER:
+                raise Exception('Число должно быть от 1 до 9 999 999 999!')
+            chunks = self._parse_number(number)
+            l = len(chunks)
+            images = [self._draw_999(num, (l - 1 - i) * 3) for i, num in enumerate(chunks) if num]
+            combimg = self._combine_images(images, self.fontsize//5, self.fontsize//(3 if self.titlo else 5))
+
+        except Exception as err:
+            if self.draw_exceptions:
+                return self._draw_exception(str(err))
+            else:
+                raise
         
         # титло
         if self.titlo:
