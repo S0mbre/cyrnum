@@ -2,7 +2,6 @@
 import dash
 import dash_bootstrap_components as dbc
 from dash_bootstrap_components.themes import DARKLY
-from whitenoise import WhiteNoise
 
 meta_tags = [{'name': 'viewport', 'content': 'width=device-width, initial-scale=1'}]
 ext_css = [dbc.themes.DARKLY] # https://bootswatch.com/darkly/
@@ -12,4 +11,3 @@ app.title = 'Легионъ имя мне: числа кириллицей'
 app.config.suppress_callback_exceptions = True
 
 server = app.server
-server.wsgi_app = WhiteNoise(server.wsgi_app, root='static/')
