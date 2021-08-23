@@ -14,7 +14,7 @@ DEBUG = False
 
 #========================== LAYOUTS =========================#
 
-headerimg = html.Div(html.Img(id='img_header', src='/static/titlecn.png'), 
+headerimg = html.Div(html.Img(id='img_header', src=utils.abspath('static') + '/titlecn.png'), 
                     style={'text-align': 'center', 'margin': '2%', 'white-space': 'nowrap'})
 
 input_number_form = dbc.FormGroup(
