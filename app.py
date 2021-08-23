@@ -12,4 +12,4 @@ app.title = 'CYRNUMS'
 app.config.suppress_callback_exceptions = True
 
 server = app.server
-server.wsgi_app = WhiteNoise(server.wsgi_app, root='assets/')
+server.wsgi_app = WhiteNoise(server.wsgi_app, root='static')
