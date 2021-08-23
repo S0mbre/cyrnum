@@ -188,10 +188,10 @@ class Cyrnum:
             if self.koloda_simple:
                 draw.line([(tbox[0] - dif, tbox[1] + dif), (tbox[0] - dif, tbox[1] - dif * 2), 
                         (tbox[2] + dif, tbox[1] - dif * 2), (tbox[2] + dif, tbox[1] + dif)],
-                        fill=self.color, width=w)
+                        fill=self.color, width=w, joint='curve')
                 draw.line([(tbox[0] - dif, tbox[3] - dif), (tbox[0] - dif, tbox[3] + dif * 2), 
                         (tbox[2] + dif, tbox[3] + dif * 2), (tbox[2] + dif, tbox[3] - dif)],
-                        fill=self.color, width=w)
+                        fill=self.color, width=w, joint='curve')
             else:
                 dif = math.ceil(self.fontsize / 18) + w
                 outerbox2 = [outerbox[0] - dif, outerbox[1] - dif, outerbox[2] + dif, outerbox[3] + dif]
