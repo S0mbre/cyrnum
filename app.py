@@ -12,4 +12,4 @@ app.title = 'Легионъ имя мне: числа кириллицей'
 app.config.suppress_callback_exceptions = True
 
 server = app.server
-server.wsgi_app = WhiteNoise(server.wsgi_app, root='static')
+server.wsgi_app = WhiteNoise(server.wsgi_app, root='static/')

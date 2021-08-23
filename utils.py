@@ -7,8 +7,8 @@ def print_traceback(**kwargs):
 
 def abspath(file, root=None):
     if not root:
-        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    return os.path.join(root, file)
+        root = os.path.dirname(os.path.abspath(__file__))
+    return os.path.abspath(os.path.join(root, file))
 
 def guid(no_hyphens=True):
     u = uuid.uuid4().hex
