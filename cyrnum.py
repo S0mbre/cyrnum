@@ -300,10 +300,10 @@ class Cyrnum:
         if self.titlo:
             draw = ImageDraw.Draw(combimg)
             x1 = self.fontsize//5
-            y1 = self.fontsize//10
-            x2 = combimg.size[0] - self.fontsize//5
-            y2 = y1 + self.fontsize//5
-            draw.line([(x1, y2), (x1, y1), (x2, y2), (x2, y1)], fill=self.color, width=self.fontsize//12, joint='curve')
+            y1 = x1
+            x2 = combimg.size[0] - x1
+            y2 = y1 * 2
+            draw.line([(x1, y2), (x1, y1), (x2, y1), (x2, y1 - x1)], fill=self.color, width=self.fontsize//12, joint='curve')
         
         return combimg
 

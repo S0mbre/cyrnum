@@ -14,7 +14,8 @@ DEBUG = False
 
 #========================== LAYOUTS =========================#
 
-header_label = html.Div([html.H2('Легионъ имя мне'), html.H4('Числа кириллицей')], style={'text-align': 'center', 'margin': '2%'})
+header_label = html.Div([html.H2('Легионъ имя мне'), html.H4(html.A('Числа кириллицей (малый счет)', href='https://ru.wikipedia.org/wiki/Система_записи_чисел_кириллицей', target='_blank'))], 
+                        style={'text-align': 'center', 'margin': '2%'})
 
 input_number_form = dbc.FormGroup(
     [
@@ -31,7 +32,7 @@ bgcolor_form = dbc.FormGroup(
     [
         dbc.Label('Цвет фона', html_for='bgcolor', width=3),
         dbc.Col(
-            dbc.Input(id='bgcolor', type='color', value='#ffffff'),
+            dbc.Input(id='bgcolor', type='color', value='#000000'),
             width={'size': 8, 'offset': 1}, lg={'size': 3, 'offset': 0}
         )
     ],
@@ -42,7 +43,7 @@ fgcolor_form = dbc.FormGroup(
     [
         dbc.Label('Цвет текста', html_for='fgcolor', width=3),
         dbc.Col(
-            dbc.Input(id='fgcolor', type='color', value='#000000'),
+            dbc.Input(id='fgcolor', type='color', value='#ffffff'),
             width={'size': 8, 'offset': 1}, lg={'size': 3, 'offset': 0}
         )
     ],
