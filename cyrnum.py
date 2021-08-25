@@ -333,8 +333,8 @@ class Cyrnum:
             images_all = []
             for i, num in enumerate(chunks):
                 if num: images_all += self._draw_999(num, (l - 1 - i) * 3)
-
-            yoffsets = [sdif + off for off in self._get_char_offsets(''.join([im['char'] for im in images_all]))]
+            ssdif = sdif if self.titlo else 0
+            yoffsets = [ssdif + off for off in self._get_char_offsets(''.join([im['char'] for im in images_all]))]
             combimg = self._combine_images([im['img'] for im in images_all], sdif, ldif if self.titlo else sdif, yoffsets=yoffsets)
 
         except Exception as err:
