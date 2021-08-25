@@ -4,6 +4,7 @@
 from PIL import Image, ImageDraw, ImageFont, ImageChops, ImageOps, ImageColor
 import math, textwrap
 from random import randint
+from utils import print_traceback
 
 DIGITS = {1: '\u0430', 2: '\u0432', 3: '\u0433', 4: '\u0434', 5: '\u0435', 6: '\u0455', 7: '\u0437', 8: '\u0438', 9: '\u045f', 10: '\u0456',
           20: '\u043a', 30: '\u043b', 40: '\u043c', 50: '\u043d', 60: '\u045c', 70: '\u043e', 80: '\u043f', 90: '\u0447', 100: '\u0440',
@@ -60,7 +61,7 @@ class Cyrnum:
             return img.crop(bbox)
         return img
 
-    def _combine_images(self, images, margins_rl=0, margins_tb=0, yoffsets=None):
+    def _combine_images(self, images, yoffsets=None):
         if not images:
             raise Exception('Нет изображений для склеивания!')
 
@@ -68,14 +69,14 @@ class Cyrnum:
         widths, heights = zip(*(i['img'].size for i in images)) if isdict else zip(*(i.size for i in images))
         xinterval = math.ceil(max(widths) * 0.05)
         
-        total_width = sum(widths) + margins_rl*2 + (len(widths) - 1) * xinterval
-        max_height = max(heights)
-        total_height = max_height + margins_tb*2
+        total_width = sum(widths) + (len(widths) - 1) * xinterval
+        total_height = max(heights) * 2
+        if isdict:
+            total_height += max(abs(im['yoffset']) for im in images)
 
         new_im = Image.new('RGBA' if self.transparent else 'RGB', (total_width, total_height), self.bgcolor)
 
-        x_offset = margins_rl
-        
+        x_offset = 0        
         for j, im in enumerate(images):
             img = im['img'] if isdict else im
             yoffset = im['yoffset'] if isdict else 0
@@ -83,7 +84,7 @@ class Cyrnum:
             new_im.paste(img, (x_offset, yoffset))
             x_offset += img.size[0] + xinterval
             
-        return new_im
+        return self._autocrop(new_im)
 
     def _draw_txt_rot(self, img, x, y, txt, angle=0):
         font = ImageFont.truetype(FONTFILE, math.ceil(self.fontsize * 0.3), encoding='unic')
@@ -321,9 +322,6 @@ class Cyrnum:
         return offsets
 
     def draw(self, number):
-        sdif = math.ceil(self.fontsize / 5)
-        ldif = math.ceil(self.fontsize / 3)
-
         try:
             if number < 1 or number > MAXNUMBER:
                 raise Exception('Число должно быть от 1 до 9 999 999 999!')
@@ -333,9 +331,23 @@ class Cyrnum:
             images_all = []
             for i, num in enumerate(chunks):
                 if num: images_all += self._draw_999(num, (l - 1 - i) * 3)
-            ssdif = sdif if self.titlo else 0
-            yoffsets = [ssdif + off for off in self._get_char_offsets(''.join([im['char'] for im in images_all]))]
-            combimg = self._combine_images([im['img'] for im in images_all], sdif, ldif if self.titlo else sdif, yoffsets=yoffsets)
+            yoffsets = self._get_char_offsets(''.join([im['char'] for im in images_all]))
+            combimg = self._combine_images([im['img'] for im in images_all], yoffsets)
+
+            # титло
+            if self.titlo:
+                sdif = math.ceil(self.fontsize / 5)
+                combimg2 = Image.new('RGBA' if self.transparent else 'RGB', (combimg.size[0], combimg.size[1] + sdif * 2), self.bgcolor)
+                draw = ImageDraw.Draw(combimg2)
+                x1 = sdif
+                y1 = sdif
+                x2 = combimg2.size[0] - sdif
+                y2 = y1 * 2
+                draw.line([(x1, y2), (x1, y1), (x2, y1), (x2, y1 - sdif)], fill=self.color, width=math.ceil(self.fontsize / 12), joint='curve')
+                combimg2.paste(combimg, (0, sdif * 2))
+                combimg = combimg2
+
+            return combimg
 
         except Exception as err:
             if self.draw_exceptions:
@@ -343,16 +355,8 @@ class Cyrnum:
             else:
                 raise
         
-        # титло
-        if self.titlo:
-            draw = ImageDraw.Draw(combimg)
-            x1 = sdif
-            y1 = sdif
-            x2 = combimg.size[0] - sdif
-            y2 = y1 * 2
-            draw.line([(x1, y2), (x1, y1), (x2, y1), (x2, y1 - sdif)], fill=self.color, width=math.ceil(self.fontsize / 12), joint='curve')
-        
-        return combimg
+        except:
+            print_traceback()
 
     def random_numbers(self, from_=1, to_=MAXNUMBER, n=1):
         numbas = []
