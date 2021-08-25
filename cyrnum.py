@@ -358,6 +358,10 @@ class Cyrnum:
         except:
             print_traceback()
 
+    @staticmethod
+    def random_number(from_=1, to_=MAXNUMBER):
+        return randint(from_, to_)
+
     def random_numbers(self, from_=1, to_=MAXNUMBER, n=1):
         numbas = []
         for _ in range(n):

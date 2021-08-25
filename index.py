@@ -21,9 +21,11 @@ input_number_form = dbc.FormGroup(
     [
         dbc.Label('Число', html_for='input_number', width=3),
         dbc.Col(
-            dbc.Input(id='input_number', type='number', placeholder=f'1 - {MAXNUMBER}', min=1, max=MAXNUMBER, step=1),
-            width={'size': 8, 'offset': 1}, lg={'size': 3, 'offset': 0}
-        )
+            html.Div([           
+                dbc.Input(id='input_number', type='number', style={'background-color': '#00bc7e'}, placeholder=f'1 - {MAXNUMBER}', min=1, max=MAXNUMBER, step=1),
+                html.P(),
+                dbc.Button('Случайное', id='btn_random', color='primary', outline=True)]),
+            width={'size': 8, 'offset': 1}, lg={'size': 3, 'offset': 0}),
     ],
     row=True
 )
@@ -52,7 +54,7 @@ fgcolor_form = dbc.FormGroup(
 
 size_form = dbc.FormGroup(
     [
-        dbc.Label('Размер текста', html_for='sizerange', width=3),
+        dbc.Label('Размер', html_for='sizerange', width=3),
         dbc.Col(
             dcc.Slider(id='sizerange', min=64, max=960, value=256, step=64),
             width={'size': 8, 'offset': 1}, lg={'size': 3, 'offset': 0}
@@ -127,7 +129,7 @@ def get_pic_data(number, bgcolor, fgcolor, fontsize, transparent, titlo, simple_
     State('fgcolor', 'value'),
     State('sizerange', 'value'),
     State('options_checklist', 'value'))
-def register__update_pic(number, bgcolor, fgcolor, fontsize, options, old_number, old_bgcolor, old_fgcolor, old_fontsize, old_options):
+def generate_image(number, bgcolor, fgcolor, fontsize, options, old_number, old_bgcolor, old_fgcolor, old_fontsize, old_options):
     ctx = dash.callback_context
     fired_id = ctx.triggered[0]['prop_id'].split('.')[0] if ctx.triggered else None
 
@@ -151,6 +153,13 @@ def register__update_pic(number, bgcolor, fgcolor, fontsize, options, old_number
 
     elif fired_id == 'options_checklist':
         return get_pic_data(int(old_number), old_bgcolor, old_fgcolor, old_fontsize, *[i in options for i in range(4)]) if old_number else ''
+
+@app.callback(
+    Output('input_number', 'value'),
+    Input('btn_random', 'n_clicks'))
+def random_number(n):
+    if not n: raise PreventUpdate
+    return Cyrnum.random_number()
 
 #-----------------------------------------------------------------------------------#
 
