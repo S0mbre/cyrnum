@@ -11,7 +11,7 @@ def main():
     # randn[1].show()
 
     cn[1023456987].show()
-    cn[700100107].show()
+    cn(700100107).show()
     # cn.get_char_offsets(''.join(DIGITS.values()))
 
 if __name__ == '__main__':

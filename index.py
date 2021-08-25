@@ -11,6 +11,7 @@ from cyrnum import Cyrnum, MAXNUMBER
 import utils
 
 DEBUG = False
+RUNLOCAL = False
 
 #========================== LAYOUTS =========================#
 
@@ -164,5 +165,7 @@ def random_number(n):
 #-----------------------------------------------------------------------------------#
 
 if __name__ == '__main__':
-    # app.run_server(host='localhost', debug=DEBUG)
-    app.run_server(debug=DEBUG)
+    if RUNLOCAL:
+        app.run_server(host='localhost', debug=DEBUG)
+    else:
+        app.run_server(debug=DEBUG)
