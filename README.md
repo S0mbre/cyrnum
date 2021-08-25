@@ -8,7 +8,7 @@ Pure Python app with local (console) and web (GUI) version to convert any number
 
 The engine in `cyrnum.py` is the `Cyrnum` class. Its main method is `draw()` taking a single argument -- an integer number and returning a PIL image of the Cyrillic representation, given the rendering parameters passed to the class constructor. For example, `draw(2021)` will produce the following image:
 
-![2021](https://disk.yandex.ru/i/H8uYHTGV_yLbMg)
+![2021](https://github.com/S0mbre/cyrnum/blob/main/screenshots/2021_cyr.png?raw=true "2021")
 
 #### Console App
 To run the **console app**, launch `cyrnummain.py` (see examples in that file). You first create an instance of `Cyrnum`:
@@ -42,7 +42,7 @@ Of course, you can also do anything with the returned image -- save, transform, 
 #### Web App
 To run the **web app** on localhost (your computer), change the `RUNLOCAL` global variable in `index.py` to `True` and launch `index.py`. (`RUNLOCAL` set to `False` is kept for the non-local app available on Heroku [here](https://cyrnum.herokuapp.com/).)
 
-![Screenshot of the web app](https://disk.yandex.ru/i/NnCnCBTj8tLqEg)
+![Screenshot of the web app](https://github.com/S0mbre/cyrnum/blob/main/screenshots/web.jpg "Screenshot of the web app")
 
 The web app lets you enter the number and configure the rendered image using GUI controls on a single page.  There is also a button to produce a random input number below the main input field.
 
@@ -56,7 +56,7 @@ The public version is available on Heroku [here](https://cyrnum.herokuapp.com/).
 
 Движок приложения -- класс `Cyrnum` в файле `cyrnum.py`. Основной метод -- `draw()` принимает единственный аргумент -- целое число и возвращает битмап (картинку) в формате PIL этого числа, записанного кириллицей с учетом параметров отображения, передаваемых в конструктор класса. Например, `draw(2021)` сгенерирует такое изображение:
 
-![2021](https://disk.yandex.ru/i/H8uYHTGV_yLbMg)
+![2021](https://github.com/S0mbre/cyrnum/blob/main/screenshots/2021_cyr.png?raw=true "2021")
 
 #### Консольный интерфейс
 Для работы приложения **из консоли** запустите `cyrnummain.py` (см. примеры в этом файле). Сначала создаем объект `Cyrnum`:
@@ -90,7 +90,7 @@ cn = Cyrnum(256, # размер шрифта
 #### Веб-интерфейс
 Для запуска **веб-приложения** на локальном хосте (вашем компьютере), установите значение глобальной переменной `RUNLOCAL` в файле `index.py` на `True` и запустите `index.py`. (`RUNLOCAL = False` установлено по умолчанию для [приложения на Heroku](https://cyrnum.herokuapp.com/).)
 
-![Скриншот веб-приложения](https://disk.yandex.ru/i/NnCnCBTj8tLqEg)
+![Скриншот веб-приложения](https://github.com/S0mbre/cyrnum/blob/main/screenshots/web.jpg "Скриншот веб-приложения")
 
 Веб-приложение позволяет генерировать изображения при помощи элементов управления, расположенных на одной странице.  Также есть кнопка для генерации случайного числа под полем ввода числа.
 
