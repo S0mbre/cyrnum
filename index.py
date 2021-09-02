@@ -92,7 +92,7 @@ img_card = html.Div(
 
 footer = dbc.Navbar([
     dbc.NavLink('Iskander Shafikov, 2021', href='mailto:s00mbre@gmail.com', style={'color': 'black'})
-], fixed='bottom')
+], dark=True, sticky='bottom')
 
 #======================== MAIN LAYOUT ========================#
 
@@ -102,7 +102,7 @@ app.layout = html.Div(
         form_all,
         img_card,
         footer
-    ], style={'margin-bottom': '5%'})
+    ])
 
 #======================== CALLBACKS ========================#
 
