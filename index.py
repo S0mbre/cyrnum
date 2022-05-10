@@ -1,70 +1,66 @@
 # -*- coding: utf-8 -*-
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+from matplotlib.pyplot import margins
 
 from app import app, server
 from cyrnum import Cyrnum, MAXNUMBER
 import utils
 
 DEBUG = False
-RUNLOCAL = False
+RUNLOCAL = True
 
 #========================== LAYOUTS =========================#
 
 header_label = html.Div([html.H2('Легионъ имя мне'), html.H4(html.A('Числа кириллицей (малый счет)', href='https://ru.wikipedia.org/wiki/Система_записи_чисел_кириллицей', target='_blank'))], 
                         style={'text-align': 'center', 'margin': '2%'})
 
-input_number_form = dbc.FormGroup(
+input_number_form = dbc.Row(
     [
         dbc.Label('Число', html_for='input_number', width=3),
         dbc.Col(
             html.Div([           
                 dbc.Input(id='input_number', type='number', style={'background-color': '#00bc7e'}, placeholder=f'1 - {MAXNUMBER}', min=1, max=MAXNUMBER, step=1),
                 html.P(),
-                dbc.Button('Случайное', id='btn_random', color='primary', outline=True)]),
+                dbc.Button('Случайное', id='btn_random', color='primary', outline=True)], style={'margin-bottom': '20px'}),
             width={'size': 8, 'offset': 1}, lg={'size': 3, 'offset': 0}),
-    ],
-    row=True
+    ]
 )
 
-bgcolor_form = dbc.FormGroup(
+bgcolor_form = html.Div(dbc.Row(
     [
         dbc.Label('Цвет фона', html_for='bgcolor', width=3),
         dbc.Col(
             dbc.Input(id='bgcolor', type='color', value='#000000'),
             width={'size': 8, 'offset': 1}, lg={'size': 3, 'offset': 0}
         )
-    ],
-    row=True
-)
+    ]
+), style={'margin-bottom': '20px'})
 
-fgcolor_form = dbc.FormGroup(
+fgcolor_form = html.Div(dbc.Row(
     [
         dbc.Label('Цвет текста', html_for='fgcolor', width=3),
         dbc.Col(
             dbc.Input(id='fgcolor', type='color', value='#ffffff'),
             width={'size': 8, 'offset': 1}, lg={'size': 3, 'offset': 0}
         )
-    ],
-    row=True
-)
+    ]
+), style={'margin-bottom': '20px'})
 
-size_form = dbc.FormGroup(
+size_form = html.Div(dbc.Row(
     [
         dbc.Label('Размер', html_for='sizerange', width=3),
         dbc.Col(
             dcc.Slider(id='sizerange', min=64, max=960, value=256, step=64),
             width={'size': 8, 'offset': 1}, lg={'size': 3, 'offset': 0}
         )
-    ],
-    row=True
-)
+    ]
+), style={'margin-bottom': '20px'})
 
-options_form = dbc.FormGroup(
+options_form = dbc.Row(
     [
         dbc.Label('Опции', html_for='options_checklist', width=3),
         dbc.Col(
@@ -79,8 +75,7 @@ options_form = dbc.FormGroup(
                 value=[0, 1]),
             width={'size': 8, 'offset': 1}, lg={'size': 3, 'offset': 0}
         )
-    ],
-    row=True
+    ]
 )
 
 form_all = html.Div(dbc.Form(id='form_all', children=[input_number_form, bgcolor_form, fgcolor_form, size_form, options_form]), 
